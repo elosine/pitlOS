@@ -17,7 +17,7 @@ var statusbar = document.getElementById('statusbar');
 //SCENE /////////////////////////////////
 var renderer, scene, camera, pointLight, spotLight;
 var fieldLength = 700;
-var fieldWidth = 100;
+var fieldWidth = 140;
 //COLORS /////////////////////////////////
 var clr_limegreen = new THREE.Color("rgb(153, 255, 0)");
 var clr_yellow = new THREE.Color("rgb(255, 255, 0)");
@@ -42,8 +42,8 @@ function setup() {
 // FUNCTION: CREATE SCENE ------------------------------- //
 function createScene() {
   //Scene Size
-  var WIDTH = 440;
-  var HEIGHT = 500;
+  var WIDTH = 700;
+  var HEIGHT = 600;
   //Camera Attributes
   var VIEW_ANGLE = 45;
   var ASPECT = WIDTH / HEIGHT;
