@@ -17,11 +17,12 @@ var statusbar = document.getElementById('statusbar');
 //SCENE /////////////////////////////////
 var renderer, scene, camera, pointLight, spotLight;
 var fieldLength = 700;
-var fieldWidth = 150;
+var fieldWidth = 100;
 //COLORS /////////////////////////////////
 var clr_limegreen = new THREE.Color("rgb(153, 255, 0)");
 var clr_yellow = new THREE.Color("rgb(255, 255, 0)");
 var clr_orange = new THREE.Color("rgb(255, 128, 0)");
+var clr_niceBlue = new THREE.Color("0x708090");
 //TEMPO FRETS ///////////////////////////////
 var tfmatl, gofret, tfbgeom, tfbmatl, gofretborder;
 var gofretposx = -340;
@@ -41,8 +42,8 @@ function setup() {
 // FUNCTION: CREATE SCENE ------------------------------- //
 function createScene() {
   //Scene Size
-  var WIDTH = 500;
-  var HEIGHT = 300;
+  var WIDTH = 440;
+  var HEIGHT = 500;
   //Camera Attributes
   var VIEW_ANGLE = 45;
   var ASPECT = WIDTH / HEIGHT;
@@ -72,11 +73,11 @@ function createScene() {
   c.appendChild(renderer.domElement);
   //Set up the playing surface plane
   var planeLength = fieldLength;
-  var planeWidth = fieldWidth + 50;
+  var planeWidth = fieldWidth;
   var planeQuality = 10;
   var planeMaterial =
     new THREE.MeshLambertMaterial({
-      color: 'black'
+      color: 0x0040C0
     });
   var plane = new THREE.Mesh(
     new THREE.PlaneGeometry(
