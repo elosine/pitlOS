@@ -4,6 +4,7 @@
   "description": "",
   "main": "pitl_nodejs_server.js",
   "scripts": {
+    "start": "pitl_nodejs_server.js"
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
