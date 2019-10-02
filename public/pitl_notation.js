@@ -14,7 +14,7 @@ var clockadj = 0.0;
 // SCENE /////////////////////////////////////
 var CANVASW = 450;
 var CANVASH = 600;
-var RUNWAYLENGTH = 1000;
+var RUNWAYLENGTH = 1200;
 var camera, scene, renderer, canvas;
 // STATUS BAR ////////////////////////////////
 var sb = true;
@@ -50,8 +50,10 @@ function draw() {
 function createScene() {
   // Camera ////////////////////////////////
   camera = new THREE.PerspectiveCamera(75, CANVASW / CANVASH, 1, 3000);
-  camera.position.set(0, 480, 10);
-  camera.rotation.x = rads(-52);
+  // camera.position.set(0, 480, 10);
+  camera.position.set(0, 490, -64);
+  // camera.rotation.x = rads(-52);
+  camera.rotation.x = rads(-60);
   // Scene /////////////////////////////////
   scene = new THREE.Scene();
   // Lights ////////////////////////////////
@@ -66,7 +68,7 @@ function createScene() {
   renderer.setSize(CANVASW, CANVASH);
   canvas = document.getElementById('tlcanvas1');
   canvas.appendChild(renderer.domElement);
-  // Back runway ///////////////////////////
+  // RUNWAY //////////////////////////////////
   var runwayMatl =
     new THREE.MeshLambertMaterial({
       color: 0x0040C0
@@ -80,34 +82,17 @@ function createScene() {
   runway.rotation.x = rads(-90);
   scene.add(runway);
 
-
-
-  /*
   //TRACKS ///////////////////////////////////////////
-  var cygeom = new THREE.CylinderGeometry(5, 5, 1200, 32);
-  var cymatl = new THREE.MeshLambertMaterial({
+  var trgeom = new THREE.CylinderGeometry(13, 13, RUNWAYLENGTH, 32);
+  var trmatl = new THREE.MeshLambertMaterial({
     color: 0x708090
   });
-  var cy1 = new THREE.Mesh(cygeom, cymatl);
-  var cy2 = new THREE.Mesh(cygeom, cymatl);
-  var cy3 = new THREE.Mesh(cygeom, cymatl);
-  var cy4 = new THREE.Mesh(cygeom, cymatl);
-  cy1.rotation.x = -90 * Math.PI / 180;
-  cy1.position.z = -346;
-  cy2.rotation.x = -90 * Math.PI / 180;
-  cy2.position.z = -346;
-  cy1.position.x = -40;
-  cy2.position.x = 40;
-  cy3.rotation.x = -90 * Math.PI / 180;
-  cy3.position.z = -346;
-  cy4.rotation.x = -90 * Math.PI / 180;
-  cy4.position.z = -346;
-  cy3.position.x = -120;
-  cy4.position.x = 120;
-  scene.add(cy1);
-  scene.add(cy2);
-  scene.add(cy3);
-  scene.add(cy4);
+  var tr = new THREE.Mesh(trgeom, trmatl);
+  tr.rotation.x = -90 * Math.PI / 180;
+  tr.position.z = -RUNWAYLENGTH/2;
+  tr.position.y = 11;
+  scene.add(tr);
+  /*
   //GO FRETS ///////////////////////////////////////////
   gofret1 = new THREE.Mesh(tfgeom, gfmatl);
   gofret1.position.x = -120;
