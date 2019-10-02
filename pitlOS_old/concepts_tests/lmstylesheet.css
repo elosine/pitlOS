@@ -1,0 +1,49 @@
+body {
+  background-color: #708090;
+  /* background-color: black; */
+}
+
+#outerdiv {
+  background-color: #708090;
+  width: 100%;
+  height: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#tlcanvas0 {
+  background-color: black;
+  display: inline-block;
+  position: relative;
+  left: -5px;
+  width: 220px;
+  height: 400px;
+  text-align: center;
+}
+
+#tlcanvas1 {
+  background-color: black;
+  display: inline-block;
+  position: relative;
+  width: 350px;
+  height: 234px;
+  text-align: center;
+}
+
+#tlcanvas2 {
+  background-color: black;
+  display: inline-block;
+  position: relative;
+  left: 5px;
+  width: 220px;
+  height: 400px;
+  text-align: center;
+}
+
+#statusbar {
+  background-color: rgb(169, 169, 169);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 20px;
+}
