@@ -3,7 +3,7 @@
 var FRAMERATE = 60.0;
 var MSPERFRAME = 1000.0 / FRAMERATE;
 var SECPERFRAME = 1.0 / FRAMERATE;
-var PXPERSEC = 100.0;
+var PXPERSEC = 200.0;
 var PXPERMS = PXPERSEC / 1000.0;
 var PXPERFRAME = PXPERSEC / FRAMERATE;
 var framect = 0;
@@ -26,17 +26,17 @@ var camera, scene, renderer, canvas;
 var sb = true;
 var statusbar = document.getElementById('statusbar');
 // GO FRET /////////////////////////////////////////////
-var GOFRETLENGTH = 7;
+var GOFRETLENGTH = 15;
 var GOFRETHEIGHT = 25;
 var GOFRETPOSZ = -GOFRETLENGTH / 2;
 var goFretMatl = new THREE.MeshLambertMaterial({
   color: "rgb(153,255,0)"
 });
 goFretGeom = new THREE.CubeGeometry(CANVASW - 50, GOFRETHEIGHT, GOFRETLENGTH);
-goFretBigGeom = new THREE.CubeGeometry(CANVASW - 50 +5, GOFRETHEIGHT+5, GOFRETLENGTH+5);
+goFretBigGeom = new THREE.CubeGeometry(CANVASW - 50 + 5, GOFRETHEIGHT + 5, GOFRETLENGTH + 5);
 var goFret;
 // TEMPO FRETS /////////////////////////////////////////////
-var TEMPOFRETLENGTH = 7;
+var TEMPOFRETLENGTH = 15;
 var TEMPOFRETHEIGHT = 20;
 var tempoFretMatl = new THREE.MeshLambertMaterial({
   color: "rgb(255,103,0)"
@@ -54,7 +54,7 @@ function setup() {
 // FUNCTION: init ------------------------------------------------ //
 function init() {
   // MAKE TEMPO FRETS ///////////////////////////////////
-  tempoFrets = mkTempoFrets(3, 20, 77);
+  tempoFrets = mkTempoFrets(3, 20, 70);
 }
 // FUNCTION: animationEngine ------------------------------------- //
 function animationEngine(timestamp) {
@@ -89,7 +89,6 @@ function update(MSPERFRAME) {
     //When tf reaches goline, blink and remove
     if (framect == tempoFrets[i][2]) {
       goFretTimer = framect + 15;
-      console.log(framect + " " + goFretTimer);
       //remove tf from scene and array
       scene.remove(scene.getObjectByName(tempoFrets[i][1].name));
       tempoFrets.splice(i, 1);
@@ -108,25 +107,42 @@ function draw() {
   }
   // RENDER ///////////////////////////////////
   renderer.render(scene, camera);
-
 }
 // FUNCTION: createScene ----------------------------------------- //
 function createScene() {
   // Camera ////////////////////////////////
   camera = new THREE.PerspectiveCamera(75, CANVASW / CANVASH, 1, 3000);
-  // camera.position.set(0, 480, 10);
-  camera.position.set(0, 450, 70);
-  // camera.rotation.x = rads(-52);
-  camera.rotation.x = rads(-45);
+  camera.position.set(0, 460, 104);
+  camera.rotation.x = rads(-40);
   // Scene /////////////////////////////////
   scene = new THREE.Scene();
   // LIGHTS ////////////////////////////////
+  pointLight =
+    new THREE.PointLight(0xF8D898);
+  // set its position
+  pointLight.position.x = 0;
+  pointLight.position.y = 200;
+  pointLight.position.z = 200;
+  pointLight.intensity = 2.9;
+  pointLight.distance = 8000;
+  // add to the scene
+  scene.add(pointLight);
+  var pointLightHelper = new THREE.PointLightHelper( pointLight, 80 );
+  scene.add( pointLightHelper );
+
+
   var sun = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-  sun.position.set(300, 600, 175);
+  sun.position.set(0, 1000, 0);
+  // sun.position.set(0, 100, 0);
+  sun.rotation.x = rads(-90);
+  sun.target.position.set( 0,0,0 );
   scene.add(sun);
+  scene.add(sun.target);
+  var helper = new THREE.DirectionalLightHelper(sun, 10);
+  scene.add(helper);
   var sun2 = new THREE.DirectionalLight(0x40A040, 1.0);
   sun2.position.set(-100, 350, -200);
-  scene.add(sun2);
+  //scene.add(sun2);
   // Renderer //////////////////////////////
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(CANVASW, CANVASH);
