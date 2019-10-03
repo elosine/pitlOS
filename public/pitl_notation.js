@@ -1,5 +1,5 @@
 // GLOBAL VARIABLES ---------------------------------------------- //
-// TIMING & ANIMATION ENGINE /////////////////
+// TIMING & ANIMATION ENGINE /////////////////////////////
 var FRAMERATE = 60.0;
 var MSPERFRAME = 1000.0 / FRAMERATE;
 var SECPERFRAME = 1.0 / FRAMERATE;
@@ -11,18 +11,50 @@ var delta = 0.0;
 var lastFrameTimeMs = 0.0;
 var pieceClock = 0.0;
 var clockadj = 0.0;
-// SCENE /////////////////////////////////////
+// COLORS /////////////////////////////////////////////////
+var clr_limegreen = new THREE.Color("rgb(153, 255, 0)");
+var clr_yellow = new THREE.Color("rgb(255, 255, 0)");
+var clr_orange = new THREE.Color("rgb(255, 128, 0)");
+var clr_red = new THREE.Color("rgb(255, 0, 0)");
+var clr_purple = new THREE.Color("rgb(255, 0, 255)");
+// SCENE /////////////////////////////////////////////////
 var CANVASW = 450;
 var CANVASH = 600;
 var RUNWAYLENGTH = 1200;
 var camera, scene, renderer, canvas;
-// STATUS BAR ////////////////////////////////
+// STATUS BAR ///////////////////////////////////////////
 var sb = true;
 var statusbar = document.getElementById('statusbar');
+// GO FRET /////////////////////////////////////////////
+var GOFRETLENGTH = 7;
+var GOFRETHEIGHT = 25;
+var GOFRETPOSZ = -GOFRETLENGTH / 2;
+var goFretMatl = new THREE.MeshLambertMaterial({
+  color: "rgb(153,255,0)"
+});
+goFretGeom = new THREE.CubeGeometry(CANVASW - 50, GOFRETHEIGHT, GOFRETLENGTH);
+goFretBigGeom = new THREE.CubeGeometry(CANVASW - 50 +5, GOFRETHEIGHT+5, GOFRETLENGTH+5);
+var goFret;
+// TEMPO FRETS /////////////////////////////////////////////
+var TEMPOFRETLENGTH = 7;
+var TEMPOFRETHEIGHT = 20;
+var tempoFretMatl = new THREE.MeshLambertMaterial({
+  color: "rgb(255,103,0)"
+});
+var tempoFretGeom = new THREE.CubeGeometry(CANVASW - 30, TEMPOFRETHEIGHT, TEMPOFRETLENGTH);
+var tempoFretIx = 0;
+var tempoFrets;
+var goFretTimer = 0;
 // SET UP -------------------------------------------------------- //
 function setup() {
   createScene();
+  init();
   requestAnimationFrame(animationEngine);
+}
+// FUNCTION: init ------------------------------------------------ //
+function init() {
+  // MAKE TEMPO FRETS ///////////////////////////////////
+  tempoFrets = mkTempoFrets(3, 20, 77);
 }
 // FUNCTION: animationEngine ------------------------------------- //
 function animationEngine(timestamp) {
@@ -37,30 +69,62 @@ function animationEngine(timestamp) {
 }
 // UPDATE -------------------------------------------------------- //
 function update(MSPERFRAME) {
+  // CLOCK ///////////////////////////////////////////////
   framect++;
-  //Clock //////////////////////////////////
   pieceClock += MSPERFRAME;
   pieceClock = pieceClock - clockadj;
+  // TEMPO FRETS ////////////////////////////////////////
+  for (var i = 0; i < tempoFrets.length; i++) {
+    //add the tf to the scene if it is on the runway
+    if (tempoFrets[i][1].position.z > (-RUNWAYLENGTH)) {
+      if (tempoFrets[i][0]) {
+        tempoFrets[i][0] = false;
+        scene.add(tempoFrets[i][1]);
+      }
+    }
+    //advance tf if it is not past gofret
+    if (tempoFrets[i][1].position.z < GOFRETPOSZ) {
+      tempoFrets[i][1].position.z += PXPERFRAME;
+    }
+    //When tf reaches goline, blink and remove
+    if (framect == tempoFrets[i][2]) {
+      goFretTimer = framect + 15;
+      console.log(framect + " " + goFretTimer);
+      //remove tf from scene and array
+      scene.remove(scene.getObjectByName(tempoFrets[i][1].name));
+      tempoFrets.splice(i, 1);
+    }
+  }
 }
 // DRAW ---------------------------------------------------------- //
 function draw() {
+  // GO FRET BLINK TIMER ///////////////////////////////////
+  if (framect >= goFretTimer) {
+    goFret.material.color = clr_limegreen;
+    goFret.geometry = goFretGeom;
+  } else {
+    goFret.material.color = clr_yellow;
+    goFret.geometry = goFretBigGeom;
+  }
+  // RENDER ///////////////////////////////////
   renderer.render(scene, camera);
+
 }
 // FUNCTION: createScene ----------------------------------------- //
 function createScene() {
   // Camera ////////////////////////////////
   camera = new THREE.PerspectiveCamera(75, CANVASW / CANVASH, 1, 3000);
   // camera.position.set(0, 480, 10);
-  camera.position.set(0, 490, -64);
+  camera.position.set(0, 450, 70);
   // camera.rotation.x = rads(-52);
-  camera.rotation.x = rads(-60);
+  camera.rotation.x = rads(-45);
   // Scene /////////////////////////////////
   scene = new THREE.Scene();
-  // Lights ////////////////////////////////
+  // LIGHTS ////////////////////////////////
   var sun = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-  sun.position.set(300, 400, 175);
+  sun.position.set(300, 600, 175);
   scene.add(sun);
-  var sun2 = new THREE.DirectionalLight(0x40A040, 0.6);
+  var sun2 = new THREE.DirectionalLight(0x40A040, 1.0);
   sun2.position.set(-100, 350, -200);
   scene.add(sun2);
   // Renderer //////////////////////////////
@@ -78,63 +142,49 @@ function createScene() {
     RUNWAYLENGTH,
   );
   var runway = new THREE.Mesh(runwayGeom, runwayMatl);
-  runway.position.z = -RUNWAYLENGTH/2;
+  runway.position.z = -RUNWAYLENGTH / 2;
   runway.rotation.x = rads(-90);
   scene.add(runway);
-
   //TRACKS ///////////////////////////////////////////
-  var trgeom = new THREE.CylinderGeometry(13, 13, RUNWAYLENGTH, 32);
+  var trdiameter = 40;
+  var trgeom = new THREE.CylinderGeometry(trdiameter, trdiameter, RUNWAYLENGTH, 32);
   var trmatl = new THREE.MeshLambertMaterial({
     color: 0x708090
   });
   var tr = new THREE.Mesh(trgeom, trmatl);
-  tr.rotation.x = -90 * Math.PI / 180;
-  tr.position.z = -RUNWAYLENGTH/2;
-  tr.position.y = 11;
+  tr.rotation.x = rads(-90);
+  tr.position.z = -(RUNWAYLENGTH / 2);
+  tr.position.y = -trdiameter / 2;
   scene.add(tr);
-  /*
-  //GO FRETS ///////////////////////////////////////////
-  gofret1 = new THREE.Mesh(tfgeom, gfmatl);
-  gofret1.position.x = -120;
-  gofret1.position.z = gofretposz;
-  gofret1.rotation.z = -90 * Math.PI / 180;
-  scene.add(gofret1);
-  var gofret2 = new THREE.Mesh(tfgeom, gfmatl);
-  gofret2.position.x = -40;
-  gofret2.position.z = gofretposz;
-  gofret2.rotation.z = -90 * Math.PI / 180;
-  scene.add(gofret2);
-  var gofret3 = new THREE.Mesh(tfgeom, gfmatl);
-  gofret3.position.x = 40;
-  gofret3.position.z = gofretposz;
-  gofret3.rotation.z = -90 * Math.PI / 180;
-  scene.add(gofret3);
-  var gofret4 = new THREE.Mesh(tfgeom, gfmatl);
-  gofret4.position.x = 120;
-  gofret4.position.z = gofretposz;
-  gofret4.rotation.z = -90 * Math.PI / 180;
-  scene.add(gofret4);
-  //GESTURE GO
-  gg1 = new THREE.Mesh(gggeom, ggmatl);
-  gg2 = new THREE.Mesh(gggeom, ggmatl);
-  gg3 = new THREE.Mesh(gggeom, ggmatl);
-  gg4 = new THREE.Mesh(gggeom, ggmatl);
-  gg1.position.z = gofretposz;
-  gg1.position.x = -120;
-  scene.add(gg1);
-  gg2.position.z = gofretposz;
-  gg2.position.x = -40;
-  scene.add(gg2);
-  gg3.position.z = gofretposz;
-  gg3.position.x = 40;
-  scene.add(gg3);
-  gg4.position.z = gofretposz;
-  gg4.position.x = 120;
-  scene.add(gg4);
-*/
+  // GO FRET ////////////////////////////////////////////
+  goFret = new THREE.Mesh(goFretGeom, goFretMatl);
+  goFret.position.z = GOFRETPOSZ;
+  goFret.position.y = GOFRETHEIGHT;
+  scene.add(goFret);
+  // RENDER /////////////////////////////////////////////
   renderer.render(scene, camera);
 }
 // FUNCTION: rads ---------------------------------------------- //
 function rads(deg) {
   return (deg * Math.PI) / 180;
+}
+// FUNCTION: mkTempoFrets -------------------------------------- //
+function mkTempoFrets(startTime, numbeats, tempo) {
+  var tempoFretSet = [];
+  var numPxTilGo = startTime * PXPERSEC;
+  var iGoPx = GOFRETPOSZ - numPxTilGo;
+  var iGoFrame = numPxTilGo / PXPERFRAME;
+  for (var i = 0; i < numbeats; i++) {
+    var pxPerBeat = PXPERSEC / (tempo / 60);
+    var tempStartPx = iGoPx - (pxPerBeat * i);
+    var tempGoFrame = Math.round(iGoFrame + ((pxPerBeat / PXPERFRAME) * i));
+    var tempTempoFret = new THREE.Mesh(tempoFretGeom, tempoFretMatl);
+    tempTempoFret.position.z = tempStartPx;
+    tempTempoFret.position.y = TEMPOFRETHEIGHT;
+    tempTempoFret.name = "tempofret" + tempoFretIx;
+    tempoFretIx++;
+    var newTempoFret = [true, tempTempoFret, tempGoFrame];
+    tempoFretSet.push(newTempoFret);
+  }
+  return tempoFretSet;
 }
