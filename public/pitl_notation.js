@@ -121,28 +121,24 @@ function createScene() {
     new THREE.PointLight(0xF8D898);
   // set its position
   pointLight.position.x = 0;
-  pointLight.position.y = 200;
-  pointLight.position.z = 200;
+  pointLight.position.y = 1200;
+  pointLight.position.z = 300;
   pointLight.intensity = 2.9;
   pointLight.distance = 8000;
   // add to the scene
-  scene.add(pointLight);
-  var pointLightHelper = new THREE.PointLightHelper( pointLight, 80 );
-  scene.add( pointLightHelper );
-
+  // scene.add(pointLight);
+  var pointLightHelper = new THREE.PointLightHelper(pointLight, 80);
+  scene.add(pointLightHelper);
 
   var sun = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-  sun.position.set(0, 1000, 0);
-  // sun.position.set(0, 100, 0);
-  sun.rotation.x = rads(-90);
-  sun.target.position.set( 0,0,0 );
+  sun.position.set(300, 400, 175);
   scene.add(sun);
-  scene.add(sun.target);
+
+  var sun2 = new THREE.DirectionalLight(0x40A040, 0.6);
+  sun2.position.set(-100, 350, -200);
+  scene.add(sun2);
   var helper = new THREE.DirectionalLightHelper(sun, 10);
   scene.add(helper);
-  var sun2 = new THREE.DirectionalLight(0x40A040, 1.0);
-  sun2.position.set(-100, 350, -200);
-  //scene.add(sun2);
   // Renderer //////////////////////////////
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(CANVASW, CANVASH);
