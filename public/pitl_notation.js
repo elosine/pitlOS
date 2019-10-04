@@ -18,15 +18,15 @@ var clr_orange = new THREE.Color("rgb(255, 128, 0)");
 var clr_red = new THREE.Color("rgb(255, 0, 0)");
 var clr_purple = new THREE.Color("rgb(255, 0, 255)");
 // SCENE /////////////////////////////////////////////////
-var CANVASW = 800;
-var CANVASH = 450;
-var RUNWAYLENGTH = 1300;
+var CANVASW = 950;
+var CANVASH = 600;
+var RUNWAYLENGTH = 2400;
 var camera, scene, renderer, canvas;
 // STATUS BAR ///////////////////////////////////////////
 var sb = true;
 var statusbar = document.getElementById('statusbar');
 // GO FRET /////////////////////////////////////////////
-var TRDISTFROMCTR = 120;
+var TRDISTFROMCTR = 160;
 var GOFRETLENGTH = 15;
 var GOFRETHEIGHT = 14;
 var GOFRETPOSZ = -GOFRETLENGTH / 2;
@@ -64,8 +64,8 @@ function createScene() {
   // Camera ////////////////////////////////
   camera = new THREE.PerspectiveCamera(75, CANVASW / CANVASH, 1, 3000);
   camera.position.set(0, 460, 104);
-  camera.position.set(0, 367, 5);
-  camera.rotation.x = rads(-52);
+  camera.position.set(0, 500, 39);
+  camera.rotation.x = rads(-48);
   // Scene /////////////////////////////////
   scene = new THREE.Scene();
   // LIGHTS ////////////////////////////////
