@@ -18,9 +18,9 @@ var clr_orange = new THREE.Color("rgb(255, 128, 0)");
 var clr_red = new THREE.Color("rgb(255, 0, 0)");
 var clr_purple = new THREE.Color("rgb(255, 0, 255)");
 // SCENE /////////////////////////////////////////////////
-var CANVASW = 450;
-var CANVASH = 600;
-var RUNWAYLENGTH = 1200;
+var CANVASW = 800;
+var CANVASH = 450;
+var RUNWAYLENGTH = 1500;
 var camera, scene, renderer, canvas;
 // STATUS BAR ///////////////////////////////////////////
 var sb = true;
@@ -55,6 +55,77 @@ function setup() {
 function init() {
   // MAKE TEMPO FRETS ///////////////////////////////////
   tempoFrets = mkTempoFrets(3, 20, 70);
+}
+// FUNCTION: createScene ----------------------------------------- //
+function createScene() {
+  // Camera ////////////////////////////////
+  camera = new THREE.PerspectiveCamera(75, CANVASW / CANVASH, 1, 3000);
+  camera.position.set(0, 460, 104);
+  camera.position.set(0, 380, 20);
+  camera.rotation.x = rads(-50);
+  // Scene /////////////////////////////////
+  scene = new THREE.Scene();
+  // LIGHTS ////////////////////////////////
+  pointLight =
+    new THREE.PointLight(0xF8D898);
+  // set its position
+  pointLight.position.x = 0;
+  pointLight.position.y = 1200;
+  pointLight.position.z = 300;
+  pointLight.intensity = 2.9;
+  pointLight.distance = 8000;
+  // add to the scene
+  // scene.add(pointLight);
+  var pointLightHelper = new THREE.PointLightHelper(pointLight, 80);
+  scene.add(pointLightHelper);
+
+  var sun = new THREE.DirectionalLight(0xFFFFFF, 1.2);
+  sun.position.set(300, 400, 175);
+  sun.position.set(100, 600, 175);
+
+  scene.add(sun);
+
+  var sun2 = new THREE.DirectionalLight(0x40A040, 0.6);
+  sun2.position.set(-100, 350, -200);
+  scene.add(sun2);
+  var helper = new THREE.DirectionalLightHelper(sun, 10);
+  scene.add(helper);
+  // Renderer //////////////////////////////
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(CANVASW, CANVASH);
+  canvas = document.getElementById('tlcanvas1');
+  canvas.appendChild(renderer.domElement);
+  // RUNWAY //////////////////////////////////
+  var runwayMatl =
+    new THREE.MeshLambertMaterial({
+      color: 0x0040C0
+    });
+  var runwayGeom = new THREE.PlaneGeometry(
+    CANVASW,
+    RUNWAYLENGTH,
+  );
+  var runway = new THREE.Mesh(runwayGeom, runwayMatl);
+  runway.position.z = -RUNWAYLENGTH / 2;
+  runway.rotation.x = rads(-90);
+  scene.add(runway);
+  //TRACKS ///////////////////////////////////////////
+  var trdiameter = 40;
+  var trgeom = new THREE.CylinderGeometry(trdiameter, trdiameter, RUNWAYLENGTH, 32);
+  var trmatl = new THREE.MeshLambertMaterial({
+    color: 0x708090
+  });
+  var tr = new THREE.Mesh(trgeom, trmatl);
+  tr.rotation.x = rads(-90);
+  tr.position.z = -(RUNWAYLENGTH / 2);
+  tr.position.y = -trdiameter / 2;
+  scene.add(tr);
+  // GO FRET ////////////////////////////////////////////
+  goFret = new THREE.Mesh(goFretGeom, goFretMatl);
+  goFret.position.z = GOFRETPOSZ;
+  goFret.position.y = GOFRETHEIGHT;
+  scene.add(goFret);
+  // RENDER /////////////////////////////////////////////
+  renderer.render(scene, camera);
 }
 // FUNCTION: animationEngine ------------------------------------- //
 function animationEngine(timestamp) {
@@ -106,74 +177,6 @@ function draw() {
     goFret.geometry = goFretBigGeom;
   }
   // RENDER ///////////////////////////////////
-  renderer.render(scene, camera);
-}
-// FUNCTION: createScene ----------------------------------------- //
-function createScene() {
-  // Camera ////////////////////////////////
-  camera = new THREE.PerspectiveCamera(75, CANVASW / CANVASH, 1, 3000);
-  camera.position.set(0, 460, 104);
-  camera.rotation.x = rads(-40);
-  // Scene /////////////////////////////////
-  scene = new THREE.Scene();
-  // LIGHTS ////////////////////////////////
-  pointLight =
-    new THREE.PointLight(0xF8D898);
-  // set its position
-  pointLight.position.x = 0;
-  pointLight.position.y = 1200;
-  pointLight.position.z = 300;
-  pointLight.intensity = 2.9;
-  pointLight.distance = 8000;
-  // add to the scene
-  // scene.add(pointLight);
-  var pointLightHelper = new THREE.PointLightHelper(pointLight, 80);
-  scene.add(pointLightHelper);
-
-  var sun = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-  sun.position.set(300, 400, 175);
-  scene.add(sun);
-
-  var sun2 = new THREE.DirectionalLight(0x40A040, 0.6);
-  sun2.position.set(-100, 350, -200);
-  scene.add(sun2);
-  var helper = new THREE.DirectionalLightHelper(sun, 10);
-  scene.add(helper);
-  // Renderer //////////////////////////////
-  renderer = new THREE.WebGLRenderer();
-  renderer.setSize(CANVASW, CANVASH);
-  canvas = document.getElementById('tlcanvas1');
-  canvas.appendChild(renderer.domElement);
-  // RUNWAY //////////////////////////////////
-  var runwayMatl =
-    new THREE.MeshLambertMaterial({
-      color: 0x0040C0
-    });
-  var runwayGeom = new THREE.PlaneGeometry(
-    CANVASW,
-    RUNWAYLENGTH,
-  );
-  var runway = new THREE.Mesh(runwayGeom, runwayMatl);
-  runway.position.z = -RUNWAYLENGTH / 2;
-  runway.rotation.x = rads(-90);
-  scene.add(runway);
-  //TRACKS ///////////////////////////////////////////
-  var trdiameter = 40;
-  var trgeom = new THREE.CylinderGeometry(trdiameter, trdiameter, RUNWAYLENGTH, 32);
-  var trmatl = new THREE.MeshLambertMaterial({
-    color: 0x708090
-  });
-  var tr = new THREE.Mesh(trgeom, trmatl);
-  tr.rotation.x = rads(-90);
-  tr.position.z = -(RUNWAYLENGTH / 2);
-  tr.position.y = -trdiameter / 2;
-  scene.add(tr);
-  // GO FRET ////////////////////////////////////////////
-  goFret = new THREE.Mesh(goFretGeom, goFretMatl);
-  goFret.position.z = GOFRETPOSZ;
-  goFret.position.y = GOFRETHEIGHT;
-  scene.add(goFret);
-  // RENDER /////////////////////////////////////////////
   renderer.render(scene, camera);
 }
 // FUNCTION: rads ---------------------------------------------- //
