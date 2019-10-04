@@ -20,28 +20,31 @@ var clr_purple = new THREE.Color("rgb(255, 0, 255)");
 // SCENE /////////////////////////////////////////////////
 var CANVASW = 800;
 var CANVASH = 450;
-var RUNWAYLENGTH = 1500;
+var RUNWAYLENGTH = 1300;
 var camera, scene, renderer, canvas;
 // STATUS BAR ///////////////////////////////////////////
 var sb = true;
 var statusbar = document.getElementById('statusbar');
 // GO FRET /////////////////////////////////////////////
+var TRDISTFROMCTR = 120;
 var GOFRETLENGTH = 15;
-var GOFRETHEIGHT = 25;
+var GOFRETHEIGHT = 14;
 var GOFRETPOSZ = -GOFRETLENGTH / 2;
+var GOFRETWIDTH = (TRDISTFROMCTR*2) - 60;
 var goFretMatl = new THREE.MeshLambertMaterial({
   color: "rgb(153,255,0)"
 });
-goFretGeom = new THREE.CubeGeometry(CANVASW - 50, GOFRETHEIGHT, GOFRETLENGTH);
-goFretBigGeom = new THREE.CubeGeometry(CANVASW - 50 + 5, GOFRETHEIGHT + 5, GOFRETLENGTH + 5);
+goFretGeom = new THREE.CubeGeometry(GOFRETWIDTH, GOFRETHEIGHT, GOFRETLENGTH);
+goFretBigGeom = new THREE.CubeGeometry(GOFRETWIDTH + 5, GOFRETHEIGHT + 5, GOFRETLENGTH + 5);
 var goFret;
 // TEMPO FRETS /////////////////////////////////////////////
 var TEMPOFRETLENGTH = 15;
-var TEMPOFRETHEIGHT = 20;
+var TEMPOFRETHEIGHT = 15;
+var TEMPOFRETWIDTH = GOFRETWIDTH;
 var tempoFretMatl = new THREE.MeshLambertMaterial({
   color: "rgb(255,103,0)"
 });
-var tempoFretGeom = new THREE.CubeGeometry(CANVASW - 30, TEMPOFRETHEIGHT, TEMPOFRETLENGTH);
+var tempoFretGeom = new THREE.CubeGeometry(TEMPOFRETWIDTH, TEMPOFRETHEIGHT, TEMPOFRETLENGTH);
 var tempoFretIx = 0;
 var tempoFrets;
 var goFretTimer = 0;
@@ -61,35 +64,17 @@ function createScene() {
   // Camera ////////////////////////////////
   camera = new THREE.PerspectiveCamera(75, CANVASW / CANVASH, 1, 3000);
   camera.position.set(0, 460, 104);
-  camera.position.set(0, 380, 20);
-  camera.rotation.x = rads(-50);
+  camera.position.set(0, 367, 5);
+  camera.rotation.x = rads(-52);
   // Scene /////////////////////////////////
   scene = new THREE.Scene();
   // LIGHTS ////////////////////////////////
-  pointLight =
-    new THREE.PointLight(0xF8D898);
-  // set its position
-  pointLight.position.x = 0;
-  pointLight.position.y = 1200;
-  pointLight.position.z = 300;
-  pointLight.intensity = 2.9;
-  pointLight.distance = 8000;
-  // add to the scene
-  // scene.add(pointLight);
-  var pointLightHelper = new THREE.PointLightHelper(pointLight, 80);
-  scene.add(pointLightHelper);
-
   var sun = new THREE.DirectionalLight(0xFFFFFF, 1.2);
-  sun.position.set(300, 400, 175);
   sun.position.set(100, 600, 175);
-
   scene.add(sun);
-
   var sun2 = new THREE.DirectionalLight(0x40A040, 0.6);
-  sun2.position.set(-100, 350, -200);
+  sun2.position.set(-100, 350, 200);
   scene.add(sun2);
-  var helper = new THREE.DirectionalLightHelper(sun, 10);
-  scene.add(helper);
   // Renderer //////////////////////////////
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(CANVASW, CANVASH);
@@ -114,15 +99,23 @@ function createScene() {
   var trmatl = new THREE.MeshLambertMaterial({
     color: 0x708090
   });
-  var tr = new THREE.Mesh(trgeom, trmatl);
-  tr.rotation.x = rads(-90);
-  tr.position.z = -(RUNWAYLENGTH / 2);
-  tr.position.y = -trdiameter / 2;
-  scene.add(tr);
+  var tr1 = new THREE.Mesh(trgeom, trmatl);
+  tr1.rotation.x = rads(-90);
+  tr1.position.z = -(RUNWAYLENGTH / 2);
+  tr1.position.y = -trdiameter / 2;
+  tr1.position.x = -TRDISTFROMCTR;
+  scene.add(tr1);
+  var tr2 = new THREE.Mesh(trgeom, trmatl);
+  tr2.rotation.x = rads(-90);
+  tr2.position.z = -(RUNWAYLENGTH / 2);
+  tr2.position.y = -trdiameter / 2;
+  tr2.position.x = TRDISTFROMCTR;
+  scene.add(tr2);
   // GO FRET ////////////////////////////////////////////
   goFret = new THREE.Mesh(goFretGeom, goFretMatl);
   goFret.position.z = GOFRETPOSZ;
   goFret.position.y = GOFRETHEIGHT;
+  goFret.position.x = -TRDISTFROMCTR;
   scene.add(goFret);
   // RENDER /////////////////////////////////////////////
   renderer.render(scene, camera);
@@ -196,6 +189,7 @@ function mkTempoFrets(startTime, numbeats, tempo) {
     var tempTempoFret = new THREE.Mesh(tempoFretGeom, tempoFretMatl);
     tempTempoFret.position.z = tempStartPx;
     tempTempoFret.position.y = TEMPOFRETHEIGHT;
+    tempTempoFret.position.x = -TRDISTFROMCTR;
     tempTempoFret.name = "tempofret" + tempoFretIx;
     tempoFretIx++;
     var newTempoFret = [true, tempTempoFret, tempGoFrame];
