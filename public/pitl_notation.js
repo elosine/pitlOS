@@ -3,7 +3,7 @@
 var FRAMERATE = 60.0;
 var MSPERFRAME = 1000.0 / FRAMERATE;
 var SECPERFRAME = 1.0 / FRAMERATE;
-var PXPERSEC = 200.0;
+var PXPERSEC = 360.0;
 var PXPERMS = PXPERSEC / 1000.0;
 var PXPERFRAME = PXPERSEC / FRAMERATE;
 var framect = 0;
@@ -35,7 +35,7 @@ var sb = true;
 var statusbar = document.getElementById('statusbar');
 // GO FRET /////////////////////////////////////////////
 var TRDISTFROMCTR = 200;
-var GOFRETLENGTH = 15;
+var GOFRETLENGTH = 36;
 var GOFRETHEIGHT = 14;
 var GOFRETPOSZ = -GOFRETLENGTH / 2;
 var GOFRETWIDTH = (TRDISTFROMCTR * 2) - 60;
@@ -49,9 +49,9 @@ var goFretGeom = new THREE.CubeGeometry(GOFRETWIDTH, GOFRETHEIGHT, GOFRETLENGTH)
 var goFretBigGeom = new THREE.CubeGeometry(GOFRETWIDTH + 5, GOFRETHEIGHT + 5, GOFRETLENGTH + 5);
 var goFretL, goFretR;
 // EVENT GO /////////////////////////////////////////////
-var EVENTGOLENGTH = 21;
+var EVENTGOLENGTH = 40;
 var EVENTGOHEIGHT = 17;
-var EVENTGOPOSZ = -8;
+var EVENTGOPOSZ = -18;
 var EVENTGOWIDTH = 130;
 var eventGoLMatl = new THREE.MeshLambertMaterial({
   color: clr_neonGreen
@@ -63,7 +63,7 @@ var eventGoGeom = new THREE.CubeGeometry(EVENTGOWIDTH, EVENTGOHEIGHT, EVENTGOLEN
 var eventGoBigGeom = new THREE.CubeGeometry(EVENTGOWIDTH + 5, EVENTGOHEIGHT + 5, EVENTGOLENGTH + 5);
 var eventGoL, eventGoR;
 // TEMPO FRETS ///////////////////////////////////////////////
-var TEMPOFRETLENGTH = 15;
+var TEMPOFRETLENGTH = 36;
 var TEMPOFRETHEIGHT = 15;
 var TEMPOFRETWIDTH = GOFRETWIDTH;
 var tempoFretMatl = new THREE.MeshLambertMaterial({
@@ -103,7 +103,7 @@ function setup() {
 function init() {
   // MAKE TEMPO FRETS ///////////////////////////////////
   //  mkEventSection(startTime, numbeats, tempo, trnum, fretClr, eventSet)
-  eventSectionL = mkEventSection(3, 20, 98, 0, clr_purple, eventsL);
+  eventSectionL = mkEventSection(3, 20, 72, 0, clr_purple, eventsL);
   eventSectionR = mkEventSection(4, 20, 63, 1, clr_neonMagenta, eventsR);
 }
 // FUNCTION: createScene ----------------------------------------- //
