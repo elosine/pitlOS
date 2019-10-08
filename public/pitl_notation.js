@@ -53,7 +53,10 @@ var EVENTGOLENGTH = 21;
 var EVENTGOHEIGHT = 17;
 var EVENTGOPOSZ = -8;
 var EVENTGOWIDTH = 130;
-var eventGoMatl = new THREE.MeshLambertMaterial({
+var eventGoLMatl = new THREE.MeshLambertMaterial({
+  color: clr_neonGreen
+});
+var eventGoRMatl = new THREE.MeshLambertMaterial({
   color: clr_neonGreen
 });
 var eventGoGeom = new THREE.CubeGeometry(EVENTGOWIDTH, EVENTGOHEIGHT, EVENTGOLENGTH);
@@ -68,7 +71,7 @@ var tempoFretMatl = new THREE.MeshLambertMaterial({
 });
 var tempoFretGeom = new THREE.CubeGeometry(TEMPOFRETWIDTH, TEMPOFRETHEIGHT, TEMPOFRETLENGTH);
 var tempoFretIx = 0;
-var tempoFretsL, tempoFretsR;
+var eventSectionL, eventSectionR;
 var goFretTimerL = 0;
 var goFretTimerR = 0;
 // EVENTS ///////////////////////////////////////////////
@@ -78,6 +81,18 @@ var eventMatl = new THREE.MeshLambertMaterial({
 var eventGeom = new THREE.CubeGeometry(EVENTGOWIDTH, EVENTGOHEIGHT, EVENTGOLENGTH);
 var eventGoTimerL = 0;
 var eventGoTimerR = 0;
+var eventsL = [
+  [0, 3],
+  [0, 4],
+  [0, 5],
+  [1, 3.37]
+];
+var eventsR = [
+  [0, 2.5],
+  [0, 3],
+  [0, 3.76],
+  [1, 5.21]
+];
 // SET UP -------------------------------------------------------- //
 function setup() {
   createScene();
@@ -87,8 +102,9 @@ function setup() {
 // FUNCTION: init ------------------------------------------------ //
 function init() {
   // MAKE TEMPO FRETS ///////////////////////////////////
-  tempoFretsL = mkEventSection(3, 20, 70, 0, clr_purple, eventsL);
-  tempoFretsR = mkEventSection(4, 20, 63, 1, clr_neonRed, eventsR);
+  //  mkEventSection(startTime, numbeats, tempo, trnum, fretClr, eventSet)
+  eventSectionL = mkEventSection(3, 20, 98, 0, clr_purple, eventsL);
+  eventSectionR = mkEventSection(4, 20, 63, 1, clr_neonMagenta, eventsR);
 }
 // FUNCTION: createScene ----------------------------------------- //
 function createScene() {
@@ -154,12 +170,12 @@ function createScene() {
   goFretR.position.x = TRDISTFROMCTR;
   scene.add(goFretR);
   // EVENT GO ////////////////////////////////////////////
-  eventGoL = new THREE.Mesh(eventGoGeom, eventGoMatl);
+  eventGoL = new THREE.Mesh(eventGoGeom, eventGoLMatl);
   eventGoL.position.z = EVENTGOPOSZ;
   eventGoL.position.y = EVENTGOHEIGHT;
   eventGoL.position.x = -TRDISTFROMCTR;
   scene.add(eventGoL);
-  eventGoR = new THREE.Mesh(eventGoGeom, eventGoMatl);
+  eventGoR = new THREE.Mesh(eventGoGeom, eventGoRMatl);
   eventGoR.position.z = EVENTGOPOSZ;
   eventGoR.position.y = EVENTGOHEIGHT;
   eventGoR.position.x = TRDISTFROMCTR;
@@ -184,45 +200,91 @@ function update(MSPERFRAME) {
   framect++;
   pieceClock += MSPERFRAME;
   pieceClock = pieceClock - clockadj;
-  // TEMPO FRETS ////////////////////////////////////////
-  for (var i = 0; i < tempoFretsL[0].length; i++) {
+  // EVENTS ///////////////////////////////////////////////////////////
+  // EVENT SECTION LEFT //////////////////////////////////////////
+  //// TEMPO FRETS LEFT  ////////////////////////////////////
+  for (var i = 0; i < eventSectionL[0].length; i++) {
     //add the tf to the scene if it is on the runway
-    if (tempoFretsL[0][i][1].position.z > (-RUNWAYLENGTH)) {
-      if (tempoFretsL[0][i][0]) {
-        tempoFretsL[0][i][0] = false;
-        scene.add(tempoFretsL[0][i][1]);
+    if (eventSectionL[0][i][1].position.z > (-RUNWAYLENGTH)) {
+      if (eventSectionL[0][i][0]) {
+        eventSectionL[0][i][0] = false;
+        scene.add(eventSectionL[0][i][1]);
       }
     }
     //advance tf if it is not past gofret
-    if (tempoFretsL[0][i][1].position.z < GOFRETPOSZ) {
-      tempoFretsL[0][i][1].position.z += PXPERFRAME;
+    if (eventSectionL[0][i][1].position.z < GOFRETPOSZ) {
+      eventSectionL[0][i][1].position.z += PXPERFRAME;
     }
     //When tf reaches goline, blink and remove
-    if (framect == tempoFretsL[0][i][2]) {
+    if (framect == eventSectionL[0][i][2]) {
       goFretTimerL = framect + 15;
       //remove tf from scene and array
-      scene.remove(scene.getObjectByName(tempoFretsL[0][i][1].name));
-      tempoFretsL.splice(i, 1); //fix this
+      scene.remove(scene.getObjectByName(eventSectionL[0][i][1].name));
+      eventSectionL[0].splice(i, 1); //fix this
     }
   }
-  for (var i = 0; i < tempoFretsR.length; i++) {
+  //// EVENTS LEFT ////////////////////////////////////////
+  for (var i = 0; i < eventSectionL[1].length; i++) {
     //add the tf to the scene if it is on the runway
-    if (tempoFretsR[i][1].position.z > (-RUNWAYLENGTH)) {
-      if (tempoFretsR[i][0]) {
-        tempoFretsR[i][0] = false;
-        scene.add(tempoFretsR[i][1]);
+    if (eventSectionL[1][i][1].position.z > (-RUNWAYLENGTH)) {
+      if (eventSectionL[1][i][0]) {
+        eventSectionL[1][i][0] = false;
+        scene.add(eventSectionL[1][i][1]);
       }
     }
     //advance tf if it is not past gofret
-    if (tempoFretsR[i][1].position.z < GOFRETPOSZ) {
-      tempoFretsR[i][1].position.z += PXPERFRAME;
+    if (eventSectionL[1][i][1].position.z < GOFRETPOSZ) {
+      eventSectionL[1][i][1].position.z += PXPERFRAME;
     }
     //When tf reaches goline, blink and remove
-    if (framect == tempoFretsR[i][2]) {
+    if (framect == eventSectionL[1][i][2]) {
+      eventGoTimerL = framect + 15;
+      //remove tf from scene and array
+      scene.remove(scene.getObjectByName(eventSectionL[1][i][1].name));
+      eventSectionL[1].splice(i, 1); //fix this
+    }
+  }
+  // EVENTS SECTION RIGHT //////////////////////////////////////////
+  //// TEMPO FRETS RIGHT  /////////////////////////////////////
+  for (var i = 0; i < eventSectionR[0].length; i++) {
+    //add the tf to the scene if it is on the runway
+    if (eventSectionR[0][i][1].position.z > (-RUNWAYLENGTH)) {
+      if (eventSectionR[0][i][0]) {
+        eventSectionR[0][i][0] = false;
+        scene.add(eventSectionR[0][i][1]);
+      }
+    }
+    //advance tf if it is not past gofret
+    if (eventSectionR[0][i][1].position.z < GOFRETPOSZ) {
+      eventSectionR[0][i][1].position.z += PXPERFRAME;
+    }
+    //When tf reaches goline, blink and remove
+    if (framect == eventSectionR[0][i][2]) {
       goFretTimerR = framect + 15;
       //remove tf from scene and array
-      scene.remove(scene.getObjectByName(tempoFretsR[i][1].name));
-      tempoFretsR.splice(i, 1);
+      scene.remove(scene.getObjectByName(eventSectionR[0][i][1].name));
+      eventSectionR[0].splice(i, 1);
+    }
+  }
+  //// EVENTS RIGHT  /////////////////////////////////////
+  for (var i = 0; i < eventSectionR[1].length; i++) {
+    //add the tf to the scene if it is on the runway
+    if (eventSectionR[1][i][1].position.z > (-RUNWAYLENGTH)) {
+      if (eventSectionR[1][i][0]) {
+        eventSectionR[1][i][0] = false;
+        scene.add(eventSectionR[1][i][1]);
+      }
+    }
+    //advance tf if it is not past gofret
+    if (eventSectionR[1][i][1].position.z < GOFRETPOSZ) {
+      eventSectionR[1][i][1].position.z += PXPERFRAME;
+    }
+    //When tf reaches goline, blink and remove
+    if (framect == eventSectionR[1][i][2]) {
+      eventGoTimerR = framect + 15;
+      //remove tf from scene and array
+      scene.remove(scene.getObjectByName(eventSectionR[1][i][1].name));
+      eventSectionR[1].splice(i, 1);
     }
   }
 }
@@ -230,17 +292,17 @@ function update(MSPERFRAME) {
 function draw() {
   // GO FRET BLINK TIMER ///////////////////////////////////
   if (framect >= goFretTimerL) {
-    goFretL.material.color = clr_safetyOrange;
+    goFretL.material.color = clr_yellow;
     goFretL.geometry = goFretGeom;
   } else {
-    goFretL.material.color = clr_yellow;
+    goFretL.material.color = clr_safetyOrange;
     goFretL.geometry = goFretBigGeom;
   }
   if (framect >= goFretTimerR) {
-    goFretR.material.color = clr_safetyOrange;
+    goFretR.material.color = clr_yellow;
     goFretR.geometry = goFretGeom;
   } else {
-    goFretR.material.color = clr_yellow;
+    goFretR.material.color = clr_safetyOrange;
     goFretR.geometry = goFretBigGeom;
   }
   // EVENT BLINK TIMER ///////////////////////////////////
@@ -248,14 +310,14 @@ function draw() {
     eventGoL.material.color = clr_neonGreen;
     eventGoL.geometry = eventGoGeom;
   } else {
-    eventGoL.material.color = clr_yellow;
+    eventGoL.material.color = clr_red;
     eventGoL.geometry = eventGoBigGeom;
   }
   if (framect >= eventGoTimerR) {
     eventGoR.material.color = clr_neonGreen;
     eventGoR.geometry = eventGoGeom;
   } else {
-    eventGoR.material.color = clr_yellow;
+    eventGoR.material.color = clr_red;
     eventGoR.geometry = eventGoBigGeom;
   }
   // RENDER ///////////////////////////////////
@@ -266,17 +328,6 @@ function rads(deg) {
   return (deg * Math.PI) / 180;
 }
 // FUNCTION: mkEventSection -------------------------------------- //
-var events = [
-  [0, 5],
-  [0, 6],
-  [0, 7],
-  [0, 8],
-  [0, 9],
-  [0, 10],
-  [0, 11],
-  [1, 8.9]
-];
-
 function mkEventSection(startTime, numbeats, tempo, trnum, fretClr, eventSet) {
   var tempoFretSet = [];
   var numPxTilGo = startTime * PXPERSEC;
@@ -312,10 +363,12 @@ function mkEventSection(startTime, numbeats, tempo, trnum, fretClr, eventSet) {
     //Events Scheduled by beat
     if (eventSet[i][0] == 0) {
       startpx = iGoPx - (pxPerBeat * eventSet[i][1]);
-      goframe = iGoFrame + Math.round((pxPerBeat / pxPerFrame) * eventSet[i][1]);
-    } else if (eventSet[i][0] == 1) {
-      startpx = iGoPx - (pxPerSec * eventSet[i][1]);
-      goframe = iGoFrame + Math.round(frmRate * eventSet[i][1]);
+      goframe = iGoFrame + Math.round((pxPerBeat / PXPERFRAME) * eventSet[i][1]);
+    }
+    //events Scheduled by seconds
+    else if (eventSet[i][0] == 1) {
+      startpx = iGoPx - (PXPERSEC * eventSet[i][1]);
+      goframe = iGoFrame + Math.round(FRAMERATE * eventSet[i][1]);
     }
     tempEvent.position.z = startpx;
     tempEvent.position.y = EVENTGOHEIGHT;
