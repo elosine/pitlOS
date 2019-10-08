@@ -96,6 +96,7 @@ var eventsR = [
 // NOTATION SVGS ////////////////////////////////////////
 var svgNS = "http://www.w3.org/2000/svg";
 var testpitch = document.createElementNS(svgNS, 'image');
+var testpitch2 = document.createElementNS(svgNS, 'image');
 // SET UP -------------------------------------------------------------- //
 function setup() {
   createScene();
@@ -183,7 +184,7 @@ function createScene() {
   eventGoR.position.y = EVENTGOHEIGHT;
   eventGoR.position.x = TRDISTFROMCTR;
   scene.add(eventGoR);
-  // SVG notationCanvasR ///////////////////////////////////////////////
+  // SVG NOTATION ///////////////////////////////////////////////
   testpitch.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '/svgs/fs5.svg');
   // testpitch.setAttributeNS(null, 'x', 50);
   // testpitch.setAttributeNS(null, 'y', 50);
@@ -191,6 +192,13 @@ function createScene() {
   testpitch.setAttributeNS(null, 'height', 250);
   testpitch.setAttributeNS(null, 'visibility', 'visible');
   document.getElementById("notationLSVG").appendChild(testpitch);
+  testpitch2.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '/svgs/aqf5.svg');
+  // testpitch.setAttributeNS(null, 'x', 50);
+  // testpitch.setAttributeNS(null, 'y', 50);
+  testpitch2.setAttributeNS(null, 'width', 250);
+  testpitch2.setAttributeNS(null, 'height', 250);
+  testpitch2.setAttributeNS(null, 'visibility', 'visible');
+  document.getElementById("notationRSVG").appendChild(testpitch2);
   // RENDER /////////////////////////////////////////////
   renderer.render(scene, camera);
 }

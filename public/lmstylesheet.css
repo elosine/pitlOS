@@ -54,12 +54,22 @@ body {
 
 #notationLSVG {
   background-color: white;
-  /* display: inline-block; */
+  display: inline-block;
   position: relative;
   width: 280px;
   height: 260px;
   margin-top: 5px;
-  /* text-align: center; */
+  text-align: center;
+}
+
+#notationRSVG {
+  background-color: white;
+  display: inline-block;
+  position: relative;
+  width: 280px;
+  height: 260px;
+  margin-top: 5px;
+  text-align: center;
 }
 
 #statusbar {
