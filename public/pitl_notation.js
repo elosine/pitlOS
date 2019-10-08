@@ -1,4 +1,4 @@
-// GLOBAL VARIABLES ---------------------------------------------- //
+// GLOBAL VARIABLES ---------------------------------------------------- //
 // TIMING & ANIMATION ENGINE /////////////////////////////
 var FRAMERATE = 60.0;
 var MSPERFRAME = 1000.0 / FRAMERATE;
@@ -93,20 +93,23 @@ var eventsR = [
   [0, 3.76],
   [1, 5.21]
 ];
-// SET UP -------------------------------------------------------- //
+// NOTATION SVGS ////////////////////////////////////////
+var svgNS = "http://www.w3.org/2000/svg";
+var testpitch = document.createElementNS(svgNS, 'image');
+// SET UP -------------------------------------------------------------- //
 function setup() {
   createScene();
   init();
   requestAnimationFrame(animationEngine);
 }
-// FUNCTION: init ------------------------------------------------ //
+// FUNCTION: init ------------------------------------------------------ //
 function init() {
   // MAKE TEMPO FRETS ///////////////////////////////////
   //  mkEventSection(startTime, numbeats, tempo, trnum, fretClr, eventSet)
   eventSectionL = mkEventSection(3, 20, 72, 0, clr_purple, eventsL);
   eventSectionR = mkEventSection(4, 20, 63, 1, clr_neonMagenta, eventsR);
 }
-// FUNCTION: createScene ----------------------------------------- //
+// FUNCTION: createScene ---------------------------------------------- //
 function createScene() {
   // Camera ////////////////////////////////
   camera = new THREE.PerspectiveCamera(75, CANVASW / CANVASH, 1, 3000);
@@ -169,7 +172,7 @@ function createScene() {
   goFretR.position.y = GOFRETHEIGHT;
   goFretR.position.x = TRDISTFROMCTR;
   scene.add(goFretR);
-  // EVENT GO ////////////////////////////////////////////
+  // EVENT GO ///////////////////////////////////////////////
   eventGoL = new THREE.Mesh(eventGoGeom, eventGoLMatl);
   eventGoL.position.z = EVENTGOPOSZ;
   eventGoL.position.y = EVENTGOHEIGHT;
@@ -180,6 +183,14 @@ function createScene() {
   eventGoR.position.y = EVENTGOHEIGHT;
   eventGoR.position.x = TRDISTFROMCTR;
   scene.add(eventGoR);
+  // SVG notationCanvasR ///////////////////////////////////////////////
+  testpitch.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '/svgs/fs5.svg');
+  // testpitch.setAttributeNS(null, 'x', 50);
+  // testpitch.setAttributeNS(null, 'y', 50);
+  testpitch.setAttributeNS(null, 'width', 250);
+  testpitch.setAttributeNS(null, 'height', 250);
+  testpitch.setAttributeNS(null, 'visibility', 'visible');
+  document.getElementById("notationLSVG").appendChild(testpitch);
   // RENDER /////////////////////////////////////////////
   renderer.render(scene, camera);
 }
@@ -194,14 +205,14 @@ function animationEngine(timestamp) {
   }
   requestAnimationFrame(animationEngine);
 }
-// UPDATE -------------------------------------------------------- //
+// UPDATE -------------------------------------------------------------- //
 function update(MSPERFRAME) {
   // CLOCK ///////////////////////////////////////////////
   framect++;
   pieceClock += MSPERFRAME;
   pieceClock = pieceClock - clockadj;
-  // EVENTS ///////////////////////////////////////////////////////////
-  // EVENT SECTION LEFT //////////////////////////////////////////
+  // EVENTS /////////////////////////////////////////////////////
+  // EVENT SECTION LEFT ///////////////////////////////////////
   //// TEMPO FRETS LEFT  ////////////////////////////////////
   for (var i = 0; i < eventSectionL[0].length; i++) {
     //add the tf to the scene if it is on the runway
@@ -244,7 +255,7 @@ function update(MSPERFRAME) {
       eventSectionL[1].splice(i, 1); //fix this
     }
   }
-  // EVENTS SECTION RIGHT //////////////////////////////////////////
+  // EVENTS SECTION RIGHT /////////////////////////////////////
   //// TEMPO FRETS RIGHT  /////////////////////////////////////
   for (var i = 0; i < eventSectionR[0].length; i++) {
     //add the tf to the scene if it is on the runway
@@ -288,7 +299,7 @@ function update(MSPERFRAME) {
     }
   }
 }
-// DRAW ---------------------------------------------------------- //
+// DRAW ---------------------------------------------------------------- //
 function draw() {
   // GO FRET BLINK TIMER ///////////////////////////////////
   if (framect >= goFretTimerL) {
@@ -323,11 +334,11 @@ function draw() {
   // RENDER ///////////////////////////////////
   renderer.render(scene, camera);
 }
-// FUNCTION: rads ---------------------------------------------- //
+// FUNCTION: rads ---------------------------------------------------- //
 function rads(deg) {
   return (deg * Math.PI) / 180;
 }
-// FUNCTION: mkEventSection -------------------------------------- //
+// FUNCTION: mkEventSection ------------------------------------------- //
 function mkEventSection(startTime, numbeats, tempo, trnum, fretClr, eventSet) {
   var tempoFretSet = [];
   var numPxTilGo = startTime * PXPERSEC;
